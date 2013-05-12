@@ -24,7 +24,7 @@ with Util;
 with Lumen; use Lumen;
 with Lumen.Window;
 with Lumen.Events.Animate;
-procedure Tut01 is
+procedure Tut03 is
 
   ---------------------------------------------------------------------------
 
@@ -36,7 +36,9 @@ procedure Tut01 is
 
   ---------------------------------------------------------------------------
 
-  function New_Frame (Frame_Delta: in Duration) return Boolean is
+  function New_Frame (Frame_Delta: in Duration) return Boolean
+  is
+    pragma Unreferenced (Frame_Delta);
   begin
     Util.Update;
     Util.Render (Win);
@@ -59,4 +61,4 @@ begin
   end if;
   Events.Animate.Run (Win, 60, New_Frame'Unrestricted_Access);
 
-end Tut01;
+end Tut03;
