@@ -36,7 +36,9 @@ procedure Tut02 is
 
   ---------------------------------------------------------------------------
 
-  function New_Frame (Frame_Delta: in Duration) return Boolean is
+  function New_Frame (Frame_Delta: in Duration) return Boolean
+  is
+    pragma Unreferenced (Frame_Delta);
   begin
     Util.Update;
     Util.Render (Win);
