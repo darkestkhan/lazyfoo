@@ -24,7 +24,7 @@ with Util;
 with Lumen; use Lumen;
 with Lumen.Window;
 with Lumen.Events.Animate;
-procedure Tut01 is
+procedure Tut02 is
 
   ---------------------------------------------------------------------------
 
@@ -59,4 +59,4 @@ begin
   end if;
   Events.Animate.Run (Win, 60, New_Frame'Unrestricted_Access);
 
-end Tut01;
+end Tut02;

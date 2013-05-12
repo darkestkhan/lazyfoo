@@ -35,17 +35,13 @@ package body Util is
   -- Projection Scale
   Projection_Scale: Float := 1.0;
 
-  -- Viewport mode
-  Viewport: Viewport_Mode := Full;
-
   ---------------------------------------------------------------------------
-
 
   function Init_GL return Boolean is
     use type GL.Enum;
   begin
     -- Set the viewport
-    GL.Viewport (0.0, 0.0, Float (Screen_Width), Float (Screen_Height));
+    GL.Viewport (0, 0, Screen_Width, Screen_Height);
 
     -- Initialize Projection matrix
     GL.Matrix_Mode (GL.GL_PROJECTION);
@@ -130,7 +126,10 @@ package body Util is
     ( Category  : Events.Key_Category;
       Symbol    : Events.Key_Symbol;
       Modifiers : Events.Modifier_Set
-    ) is
+    )
+  is
+    pragma Unreferenced (Category);
+    pragma Unreferenced (Modifiers);
   begin
     if Events.To_Character (Symbol) = 'q' then
       if Color_Mode = Color_Mode_Cyan then
