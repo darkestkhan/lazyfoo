@@ -29,14 +29,15 @@ package body Util is
   package TIO renames Ada.Text_IO;
 
   ---------------------------------------------------------------------------
+  -- Camera position
+  CameraX: Float := 0.0;
+  CameraY: Float := 0.0;
+
+  ---------------------------------------------------------------------------
   -- Projection Scale
   Projection_Scale: constant Float := 1.0;
 
-  -- Viewport mode
-  Viewport: Viewport_Mode := Full;
-
   ---------------------------------------------------------------------------
-
 
   function Init_GL return Boolean is
     use type GL.Enum;
@@ -56,9 +57,13 @@ package body Util is
     GL.Matrix_Mode (GL.GL_MODELVIEW);
     GL.Load_Identity;
 
+    -- Save the default modelview matrix
+    GL.Push_Matrix;
+
     -- Initialize clear color
     GL.Clear_Color (0.0, 0.0, 0.0, 1.0);
 
+    -- Check for error
     declare
       Error: constant GL.Enum := GL.Get_Error;
     begin
@@ -84,8 +89,12 @@ package body Util is
     -- Clear color buffer
     GL.Clear (GL.GL_COLOR_BUFFER_BIT);
 
-    -- Reset modelview matrix
-    GL.Load_Identity;
+    -- Pop default matrix onto current matrix
+    GL.Matrix_Mode (GL.GL_MODELVIEW);
+    GL.Pop_Matrix;
+
+    -- Save default matrix again
+    GL.Push_Matrix;
 
     -- Move to center of the screen
     GL.Translate
@@ -94,148 +103,58 @@ package body Util is
         0.0
       );
 
-    -- Full View
-    if Viewport = Full then
-      -- Fill the screen
-      GL.Viewport (0, 0, Screen_Width, Screen_Height);
+    -- Red quad
+    GL.Begin_Primitive (GL.GL_QUADS);
+    begin
+      GL.Color  (Float (1.0), 0.0, 0.0);
+      GL.Vertex ( -Float (Screen_Width) / 4.0, -Float (Screen_Height) / 4.0);
+      GL.Vertex (  Float (Screen_Width) / 4.0, -Float (Screen_Height) / 4.0);
+      GL.Vertex (  Float (Screen_Width) / 4.0,  Float (Screen_Height) / 4.0);
+      GL.Vertex ( -Float (Screen_Width) / 4.0,  Float (Screen_Height) / 4.0);
+    end;
+    GL.End_Primitive;
 
-      -- Red Quad
-      GL.Begin_Primitive (GL.GL_QUADS);
-      begin
-        GL.Color  ( Float (1.0), 0.0, 0.0);
-        GL.Vertex (-Float (Screen_Width) / 2.0, -Float (Screen_Height) / 2.0);
-        GL.Vertex ( Float (Screen_Width) / 2.0, -Float (Screen_Height) / 2.0);
-        GL.Vertex ( Float (Screen_Width) / 2.0,  Float (Screen_Height) / 2.0);
-        GL.Vertex (-Float (Screen_Width) / 2.0,  Float (Screen_Height) / 2.0);
-      end;
-      GL.End_Primitive;
-    -- Viewport at center of screen
-    elsif Viewport = Half_Center then
-      -- Center viewport
-      GL.Viewport
-        ( Screen_Width / 4, Screen_Height / 4,
-          Screen_Width / 2, Screen_Height / 2
-        );
+    -- Move to the right of the screen
+    GL.Translate (Float (Screen_Width), 0.0, 0.0);
 
-      -- Green quad
-      GL.Begin_Primitive (GL.GL_QUADS);
-      begin
-        GL.Color  ( Float (0.0), 1.0, 0.0);
-        GL.Vertex (-Float (Screen_Width) / 2.0, -Float (Screen_Height) / 2.0);
-        GL.Vertex ( Float (Screen_Width) / 2.0, -Float (Screen_Height) / 2.0);
-        GL.Vertex ( Float (Screen_Width) / 2.0,  Float (Screen_Height) / 2.0);
-        GL.Vertex (-Float (Screen_Width) / 2.0,  Float (Screen_Height) / 2.0);
-      end;
-      GL.End_Primitive;
-    -- Viewport centered at the top
-    elsif Viewport = Half_Top then
-      -- Viewport at top
-      GL.Viewport
-        ( Screen_Width / 4, Screen_Height / 2,
-          Screen_Width / 2, Screen_Height / 2
-        );
+    -- Green quad
+    GL.Begin_Primitive (GL.GL_QUADS);
+    begin
+      GL.Color  (Float (0.0), 1.0, 0.0);
+      GL.Vertex ( -Float (Screen_Width) / 4.0, -Float (Screen_Height) / 4.0);
+      GL.Vertex (  Float (Screen_Width) / 4.0, -Float (Screen_Height) / 4.0);
+      GL.Vertex (  Float (Screen_Width) / 4.0,  Float (Screen_Height) / 4.0);
+      GL.Vertex ( -Float (Screen_Width) / 4.0,  Float (Screen_Height) / 4.0);
+    end;
+    GL.End_Primitive;
 
-      -- Blue quad
-      GL.Begin_Primitive (GL.GL_QUADS);
-      begin
-        GL.Color  ( Float (0.0), 0.0, 1.0);
-        GL.Vertex (-Float (Screen_Width) / 2.0, -Float (Screen_Height) / 2.0);
-        GL.Vertex ( Float (Screen_Width) / 2.0, -Float (Screen_Height) / 2.0);
-        GL.Vertex ( Float (Screen_Width) / 2.0,  Float (Screen_Height) / 2.0);
-        GL.Vertex (-Float (Screen_Width) / 2.0,  Float (Screen_Height) / 2.0);
-      end;
-      GL.End_Primitive;
-    -- Four viewports
-    elsif Viewport = Quad then
-      -- Bottom left red quad
-      GL.Viewport (0, 0, Screen_Width / 2, Screen_Height / 2);
-      GL.Begin_Primitive (GL.GL_QUADS);
-      begin
-        GL.Color  ( Float (1.0), 0.0, 0.0);
-        GL.Vertex (-Float (Screen_Width) / 4.0, -Float (Screen_Height) / 4.0);
-        GL.Vertex ( Float (Screen_Width) / 4.0, -Float (Screen_Height) / 4.0);
-        GL.Vertex ( Float (Screen_Width) / 4.0,  Float (Screen_Height) / 4.0);
-        GL.Vertex (-Float (Screen_Width) / 4.0,  Float (Screen_Height) / 4.0);
-      end;
-      GL.End_Primitive;
+    -- Move to the lower right of the screen
+    GL.Translate (Float (0.0), Float (Screen_Height), 0.0);
 
-      -- Bottom right green quad
-      GL.Viewport (Screen_Width / 2, 0, Screen_Width / 2, Screen_Height / 2);
-      GL.Begin_Primitive (GL.GL_QUADS);
-      begin
-        GL.Color  ( Float (0.0), 1.0, 0.0);
-        GL.Vertex (-Float (Screen_Width) / 4.0, -Float (Screen_Height) / 4.0);
-        GL.Vertex ( Float (Screen_Width) / 4.0, -Float (Screen_Height) / 4.0);
-        GL.Vertex ( Float (Screen_Width) / 4.0,  Float (Screen_Height) / 4.0);
-        GL.Vertex (-Float (Screen_Width) / 4.0,  Float (Screen_Height) / 4.0);
-      end;
-      GL.End_Primitive;
+    -- Blue quad
+    GL.Begin_Primitive (GL.GL_QUADS);
+    begin
+      GL.Color  (Float (0.0), 0.0, 1.0);
+      GL.Vertex ( -Float (Screen_Width) / 4.0, -Float (Screen_Height) / 4.0);
+      GL.Vertex (  Float (Screen_Width) / 4.0, -Float (Screen_Height) / 4.0);
+      GL.Vertex (  Float (Screen_Width) / 4.0,  Float (Screen_Height) / 4.0);
+      GL.Vertex ( -Float (Screen_Width) / 4.0,  Float (Screen_Height) / 4.0);
+    end;
+    GL.End_Primitive;
 
-      -- Top left blue quad
-      GL.Viewport (0, Screen_Height / 2, Screen_Width / 2, Screen_Height / 2);
-      GL.Begin_Primitive (GL.GL_QUADS);
-      begin
-        GL.Color  ( Float (0.0), 0.0, 1.0);
-        GL.Vertex (-Float (Screen_Width) / 4.0, -Float (Screen_Height) / 4.0);
-        GL.Vertex ( Float (Screen_Width) / 4.0, -Float (Screen_Height) / 4.0);
-        GL.Vertex ( Float (Screen_Width) / 4.0,  Float (Screen_Height) / 4.0);
-        GL.Vertex (-Float (Screen_Width) / 4.0,  Float (Screen_Height) / 4.0);
-      end;
-      GL.End_Primitive;
+    -- Move below the screen
+    GL.Translate (-Float (Screen_Width), 0.0, 0.0);
 
-      -- Top right yellow quad
-      GL.Viewport
-        ( Screen_Width / 2, Screen_Height / 2,
-          Screen_Width / 2, Screen_Height / 2
-        );
-      GL.Begin_Primitive (GL.GL_QUADS);
-      begin
-        GL.Color  ( Float (1.0), 1.0, 0.0);
-        GL.Vertex (-Float (Screen_Width) / 4.0, -Float (Screen_Height) / 4.0);
-        GL.Vertex ( Float (Screen_Width) / 4.0, -Float (Screen_Height) / 4.0);
-        GL.Vertex ( Float (Screen_Width) / 4.0,  Float (Screen_Height) / 4.0);
-        GL.Vertex (-Float (Screen_Width) / 4.0,  Float (Screen_Height) / 4.0);
-      end;
-      GL.End_Primitive;
-    -- Viewport with radar subview port
-    elsif Viewport = Radar then
-      -- Fullsize Quad
-      GL.Viewport (0, 0, Screen_Width, Screen_Height);
-      GL.Begin_Primitive (GL.GL_QUADS);
-      begin
-        GL.Color  ( Float (1.0), 1.0, 1.0);
-        GL.Vertex (-Float (Screen_Width) / 8.0, -Float (Screen_Height) / 8.0);
-        GL.Vertex ( Float (Screen_Width) / 8.0, -Float (Screen_Height) / 8.0);
-        GL.Vertex ( Float (Screen_Width) / 8.0,  Float (Screen_Height) / 8.0);
-        GL.Vertex (-Float (Screen_Width) / 8.0,  Float (Screen_Height) / 8.0);
-        GL.Color  ( Float (0.0), 0.0, 0.0);
-        GL.Vertex (-Float (Screen_Width) / 16.0, -Float (Screen_Height) / 16.0);
-        GL.Vertex ( Float (Screen_Width) / 16.0, -Float (Screen_Height) / 16.0);
-        GL.Vertex ( Float (Screen_Width) / 16.0,  Float (Screen_Height) / 16.0);
-        GL.Vertex (-Float (Screen_Width) / 16.0,  Float (Screen_Height) / 16.0);
-      end;
-      GL.End_Primitive;
-
-      -- Radar quad
-      GL.Viewport
-        ( Screen_Width / 2, Screen_Height / 2,
-          Screen_Width / 2, Screen_Height / 2
-        );
-      GL.Begin_Primitive (GL.GL_QUADS);
-      begin
-        GL.Color  ( Float (1.0), 1.0, 1.0);
-        GL.Vertex (-Float (Screen_Width) / 8.0, -Float (Screen_Height) / 8.0);
-        GL.Vertex ( Float (Screen_Width) / 8.0, -Float (Screen_Height) / 8.0);
-        GL.Vertex ( Float (Screen_Width) / 8.0,  Float (Screen_Height) / 8.0);
-        GL.Vertex (-Float (Screen_Width) / 8.0,  Float (Screen_Height) / 8.0);
-        GL.Color  ( Float (0.0), 0.0, 0.0);
-        GL.Vertex (-Float (Screen_Width) / 16.0, -Float (Screen_Height) / 16.0);
-        GL.Vertex ( Float (Screen_Width) / 16.0, -Float (Screen_Height) / 16.0);
-        GL.Vertex ( Float (Screen_Width) / 16.0,  Float (Screen_Height) / 16.0);
-        GL.Vertex (-Float (Screen_Width) / 16.0,  Float (Screen_Height) / 16.0);
-      end;
-      GL.End_Primitive;
-    end if;
+    -- Yellow quad
+    GL.Begin_Primitive (GL.GL_QUADS);
+    begin
+      GL.Color  (Float (1.0), 1.0, 0.0);
+      GL.Vertex ( -Float (Screen_Width) / 4.0, -Float (Screen_Height) / 4.0);
+      GL.Vertex (  Float (Screen_Width) / 4.0, -Float (Screen_Height) / 4.0);
+      GL.Vertex (  Float (Screen_Width) / 4.0,  Float (Screen_Height) / 4.0);
+      GL.Vertex ( -Float (Screen_Width) / 4.0,  Float (Screen_Height) / 4.0);
+    end;
+    GL.End_Primitive;
 
     -- Update the screen
     Window.Swap (Win);
@@ -252,14 +171,28 @@ package body Util is
     Pragma Unreferenced (Category);
     Pragma Unreferenced (Modifiers);
   begin
-    if Events.To_Character (Symbol) = 'q' then
-      if Viewport = Viewport_Mode'Last then
-        Viewport := Viewport_Mode'First;
-      else
-        Viewport := Viewport_Mode'Succ (Viewport);
-      end if;
+    if Events.To_Character (Symbol) = 'w' then
+      CameraY := CameraY - 16.0;
+    elsif Events.To_Character (Symbol) = 's' then
+      CameraY := CameraY + 16.0;
+    elsif Events.To_Character (Symbol) = 'a' then
+      CameraX := CameraX - 16.0;
+    elsif Events.To_Character (Symbol) = 'd' then
+      CameraX := CameraX + 16.0;
+    elsif Events.To_Character (Symbol) = ASCII.ESC then
+      Terminated := True;
     end if;
-    Terminated := Events.To_Character (Symbol) = ASCII.ESC;
+
+    -- Take saved matrix off the stack and reset it
+    GL.Matrix_Mode (GL.GL_MODELVIEW);
+    GL.Pop_Matrix;
+    GL.Load_Identity;
+
+    -- Move camera to position
+    GL.Translate (-CameraX, -CameraY, 0.0);
+
+    -- Save default matrix again with camera translation
+    GL.Push_Matrix;
   end Key_Press;
 
   ---------------------------------------------------------------------------
