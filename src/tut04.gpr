@@ -1,0 +1,29 @@
+with "lumen.gpr";
+project Tut04 is
+
+  for Languages use ("Ada");
+  for Source_Dirs use ("tut04");
+  for Object_Dir use "../obj";
+  for Exec_Dir use "..";
+  for Main use ("tut04.adb");
+
+  package Compiler is
+    CPU   := ("-m64", "-mssse3", "-march=native");
+    OPT   := ("-O3", "-fomit-frame-pointer");
+    WARN  := ("-Wall");
+
+    Ada_Switches := ("-gnat05", "-gnata", "-gnato", "-fstack-check");
+    for Default_Switches ("Ada") use Ada_Switches & CPU & OPT & WARN;
+
+    C_Switches := ("-O3", "-C99", "-fstack-check");
+    for Default_Switches ("C") use C_Switches & CPU & OPT & WARN;
+
+    Fortran_Switches := ();
+    for Default_Switches ("Fortran") use Fortran_Switches & CPU & OPT & WARN;
+  end Compiler;
+
+  package Linker is
+    for Default_Switches ("ada") use ("-lGLU", "-lGL", "-ldl", "-lX11");
+  end Linker;
+
+end Tut04;

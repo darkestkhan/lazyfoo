@@ -1,13 +1,11 @@
 with "lumen.gpr";
-project Lazyfoo is
+project Tut02 is
 
   for Languages use ("Ada");
-  for Source_Dirs use
-    ( "src/tut01", "src/tut02", "src/tut03", "src/tut04" );
-  for Object_Dir use "obj";
-  for Exec_Dir use ".";
-  for Main use
-    ( "tut01.adb", "tut02.adb", "tut03.adb", "tut04.adb" );
+  for Source_Dirs use ("tut02");
+  for Object_Dir use "../obj";
+  for Exec_Dir use "..";
+  for Main use ("tut02.adb");
 
   package Compiler is
     CPU   := ("-m64", "-mssse3", "-march=native");
@@ -28,5 +26,4 @@ project Lazyfoo is
     for Default_Switches ("ada") use ("-lGLU", "-lGL", "-ldl", "-lX11");
   end Linker;
 
-end Lazyfoo;
-
+end Tut02;
