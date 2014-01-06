@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Build the tests
+# Build the tutorials 
 cd src
 gprbuild tut01.gpr
 gprbuild tut02.gpr
