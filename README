@@ -1,2 +1,5 @@
 Implementation of OpenGL tutorials from LazyFoo [lazyfoo.net/tutorials/OpenGL]
 in Ada using Lumen.
+
+Depends on imago <http://www.github.com/darkestkhan/imago> being present in
+GPR_PROJECT_PATH.
