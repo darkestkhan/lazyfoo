@@ -28,7 +28,7 @@ project Tut06 is
 
   package Linker is
     for Default_Switches ("Ada") use
-      ( "-lGLU", "-lGL", "-ldl", "-lX11", "-lIL", "-lILU" );
+      ( "-lGLU", "-lGL", "-ldl", "-lX11", "-lIL", "-lILU", "-lILUT" );
   end Linker;
 
 end Tut06;
