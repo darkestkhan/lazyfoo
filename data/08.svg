@@ -14,7 +14,7 @@
    id="svg3051"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="07.svg">
+   sodipodi:docname="08.svg">
   <defs
      id="defs3053" />
   <sodipodi:namedview
@@ -25,7 +25,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.8284271"
-     inkscape:cx="89.370423"
+     inkscape:cx="30.503783"
      inkscape:cy="79.878492"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -51,7 +51,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -62,7 +62,7 @@
      transform="translate(0,-876.36218)">
     <g
        id="g2996"
-       transform="matrix(0.503841,0,0,0.68758847,0.20860681,329.01377)">
+       transform="matrix(0.50228156,0,0,0.68940891,0.21211526,327.10282)">
       <rect
          y="798.82373"
          x="2.4615386"
