@@ -121,13 +121,15 @@ package body Util is
 
 
     -- Calculate target colour
+    -- Slightly better solution than the one provided by lazyfoo as it prevents
+    -- artifacts from getting created when using texture that is supplied here.
     declare
-      Target_Colour: constant GL.UInt := 16#FF_FF_FF_00#;
+      Target_Colour: constant GL.UInt := 16#00_FF_FF_00#;
       Pixels: constant Texture.UInt_Array_Access :=
         Texture.Get_Pixel_Data_32 (Loaded_Texture);
     begin
       for K in Pixels'Range loop
-        if Pixels.all (K) = Target_Colour then
+        if (Pixels.all (K) and Target_Colour) /= 0 then
           Pixels.all (K) := 0;
         end if;
       end loop;
