@@ -16,4 +16,5 @@ gprbuild tut11.gpr
 gprbuild tut12.gpr
 gprbuild tut13.gpr
 gprbuild tut14.gpr
+gprbuild tut15.gpr
 cd ..
